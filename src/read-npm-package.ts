@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { getWorkspacePackageJsonPath } from './get-package-json-path';
 
 interface IPackageFileWithDependencies {
     dependencies?: Record<string, string>;
@@ -11,12 +12,7 @@ interface INpmPackage {
 }
 
 async function readPackageJson(): Promise<IPackageFileWithDependencies> {
-    const workspaceRootUri = vscode.workspace.workspaceFolders?.[0]?.uri;
-    if (!workspaceRootUri) {
-        throw new Error('folder needed!');
-    }
-
-    const workspacePackageJsonUri = vscode.Uri.joinPath(workspaceRootUri, './package.json');
+    const workspacePackageJsonUri = getWorkspacePackageJsonPath();
 
     const packageJsonTextDocument = await vscode.workspace.openTextDocument(
         workspacePackageJsonUri
@@ -63,7 +59,23 @@ export async function readNpmDependencies(): Promise<INpmPackage[]> {
         return 0;
     });
 
-    //const packageScripts = Object.keys(packageJson.scripts).sort();
-
     return allDependencies;
+}
+
+export interface INpmPackageQuickPickItem extends vscode.QuickPickItem {
+    npmPackage: INpmPackage;
+}
+
+export function createNpmPackageQuickPickItems(
+    npmPackages: INpmPackage[]
+): INpmPackageQuickPickItem[] {
+    return npmPackages.map((npmPackage) => {
+        const quickPickItem: INpmPackageQuickPickItem = {
+            label: `${npmPackage.name}: ${npmPackage.version}`,
+            npmPackage,
+            //buttons: []
+        };
+
+        return quickPickItem;
+    });
 }

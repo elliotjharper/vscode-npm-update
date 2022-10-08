@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { readNpmDependencies } from './read-npm-package';
+import { createNpmPackageQuickPickItems, readNpmDependencies } from './read-npm-package';
+import { updateNpmVersion } from './update-npm-version';
 
 export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand(
@@ -7,28 +8,24 @@ export function activate(context: vscode.ExtensionContext) {
         async () => {
             const npmPackages = await readNpmDependencies();
 
-            const selectedNpmPackage = await vscode.window.showQuickPick(
-                npmPackages.map((npmPackage) => `${npmPackage.name}: ${npmPackage.version}`)
+            const selectedItem = await vscode.window.showQuickPick(
+                createNpmPackageQuickPickItems(npmPackages)
             );
-
-            if (!selectedNpmPackage) {
-                vscode.window.showInformationMessage(
-                    'You did not select an npm package. Exiting...'
-                );
+            if (!selectedItem) {
                 return;
             }
 
-            vscode.window.showInformationMessage(
-                `Selected npm package to update: [${selectedNpmPackage}]`
-            );
+            const selectedNpmPackage = selectedItem.npmPackage;
 
-            // const activeTerminal = vscode.window.activeTerminal;
-            // if (activeTerminal) {
-            //     activeTerminal.show();
-            //     activeTerminal.sendText(`npm run ${selectedNpmScript}`);
-            // } else {
-            //     vscode.window.showInformationMessage('No active terminal. Exiting...');
-            // }
+            const desiredVersion = await vscode.window.showInputBox({
+                prompt: `Version pattern to use for ${selectedNpmPackage.name}`,
+                value: selectedNpmPackage.version,
+            });
+            if (!desiredVersion) {
+                return;
+            }
+
+            updateNpmVersion(selectedNpmPackage.name, desiredVersion);
         }
     );
 
