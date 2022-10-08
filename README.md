@@ -1,13 +1,14 @@
 ## Features
 
-This extension lets you run NPM scripts from the command palette.
+This extension lets you update NPM scripts from the command palette.
 
-Run the extension from the command palette and it will list the scripts from package.json file at the root of the workspace.
+Run the extension from the command palette and it will list your dependencies/devDependencies from package.json file at the root of the workspace.
 
-Upon selecting an item, it will focus the last used terminal and send the text `npm run ${selected script name}` which will of course result in that script being run.
+Upon selecting an item, it will show your current version pattern in use and ask you to type your desired target pattern.
+If you type in a new pattern and press enter it will then write that to your package.json
 
 _Demo:_
-<img src="https://raw.githubusercontent.com/elliotjharper/vscode-npm-script-run/main/images/demo.gif" alt="demo">
+Coming soon...
 
 ## Requirements
 
