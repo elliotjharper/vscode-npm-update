@@ -8,7 +8,7 @@ Upon selecting an item, it will show your current version pattern in use and ask
 If you type in a new pattern and press enter it will then write that to your package.json
 
 _Demo:_
-Coming soon...
+<img src="https://raw.githubusercontent.com/elliotjharper/vscode-npm-update/main/images/demo.gif" alt="demo">
 
 ## Requirements
 
